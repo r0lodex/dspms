@@ -1,5 +1,12 @@
-# dspms
+# DSPMS
 Dead Simple Parcel Management System
+
+### Description
+a quick basic api for basic operation of PMS
+
+backend: using Horus.php framework mainly for routing purpose
+
+frontend: tba
 
 ### API LIST
 
