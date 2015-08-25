@@ -223,14 +223,32 @@ $app->on('DELETE /user/([0-9]+)', function($id){
 
 
 
-//api for find parcel ------->  "/api/parcel/find"
-$app->on('GET /parcel/find/{}', function(){
+//api for find parcel ------->  "/api/parcel/find/{parcel_id}"
+$app->on('GET /parcel/find/:?', function($parcel_id){
+	$sql = 'SELECT * FROM parcel WHERE parcel_id = :q';
+	$prm = [':q' => $parcel_id];
+	$dbh = $this->dbc();
+	$qry = $dbh->prepare($sql);
+	$qry->execute($prm);
+
+	$res = $qry->fetchAll(PDO::FETCH_ASSOC);
 	
+	//send output
+	$this->out($res,200);
 });
 
-//api for list parcel ------->  "/api/parcel"
-$app->on('GET /parcel/student/{}', function(){
-	
+//api for list parcel ------->  "/api/parcel/student/{student_id}"
+$app->on('GET /parcel/student/:?', function($student_id){
+	$sql = 'SELECT * FROM parcel WHERE student_id = :q';
+	$prm = [':q' => $student_id];
+	$dbh = $this->dbc();
+	$qry = $dbh->prepare($sql);
+	$qry->execute($prm);
+
+	$res = $qry->fetchAll(PDO::FETCH_ASSOC);
+
+	//send output
+	$this->out($res,200);
 });
 
 //api for add parcel ------->  "/api/parcel"
