@@ -12,6 +12,7 @@ frontend: tba
 
 ##### user login
 >POST | /api/login
+
 request:
 
 username : system
@@ -29,7 +30,7 @@ response:
 ##### user read
 >GET | /api/user
 
-request
+request:
 ```
 /api/user?uid=1&token=576d045d14c3a741dbb3421f03ef27d6 
 ```
@@ -46,7 +47,7 @@ to create system user (non student)
 student is system consumer
 
 
-request
+request:
 
 username : -username-
 
@@ -61,6 +62,7 @@ new user created!
 ```
 ##### user update password
 >POST | /api/user/{id}
+
 request:
 
 password: <new password>
