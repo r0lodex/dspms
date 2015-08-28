@@ -12,7 +12,6 @@ frontend: tba
 
 ##### user login
 >POST | /api/login
-
 request:
 
 username : system
@@ -27,7 +26,7 @@ response:
 ```
 
 
-##### user read all
+##### user read
 >GET | /api/user
 
 request
@@ -41,6 +40,7 @@ response
 
 ##### user create
 > POST | /api/user
+
 to create system user (non student)
 
 student is system consumer
@@ -48,38 +48,36 @@ student is system consumer
 
 request
 
-username : <username>
+username : -username-
 
-password : <password>
+password : -password-
 ```
 /api/user
 ```
 
 response:
-
+```
 new user created!
-
+```
 ##### user update password
 >POST | /api/user/{id}
 request:
 
 password: <new password>
-
 ```
 /api/user/5?uid=1&token=576d045d14c3a741dbb3421f03ef27d6
 ```
-
 response:
 ```json
 {"msg":"password update successful!"}
 ```
-##### user DELETE all
+##### user DELETE 
 >DELETE | /api/user/{id}
+
 request:
 ```
 /api/user/5?uid=1&token=576d045d14c3a741dbb3421f03ef27d6
 ```
-
 response:
 ```json
 {"msg":"user deleted!"}
