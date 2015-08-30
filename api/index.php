@@ -222,6 +222,18 @@ $app->on('DELETE /user/([0-9]+)', function($id){
 });
 
 
+//api for all parcel ------> "/api/parcel"
+$app->on('GET /parcel', function(){
+	$sql = 'SELECT * FROM parcel';
+	$dbh = $this->dbc();
+	$qry = $dbh->prepare($sql);
+	$qry->execute();
+
+	$res = $qry->fetchAll(PDO::FETCH_ASSOC);
+
+	//send output
+	$this->out($res,200);
+});
 
 //api for find parcel ------->  "/api/parcel/find/{parcel_id}"
 $app->on('GET /parcel/find/:?', function($parcel_id){
@@ -232,7 +244,7 @@ $app->on('GET /parcel/find/:?', function($parcel_id){
 	$qry->execute($prm);
 
 	$res = $qry->fetchAll(PDO::FETCH_ASSOC);
-	
+
 	//send output
 	$this->out($res,200);
 });
@@ -259,7 +271,7 @@ $app->on('POST /parcel', function(){
 		$this->out('access unauthorized',400);
 	}else{
 		$parcel = (isset($this->body->parcel)) ? $this->body->parcel : $this->out('parcel is required',400);
-		$data = json_decode($parcel);	
+		$data = json_decode($parcel);
 
 		//check if user already existed
 		$sql = 'SELECT id FROM parcel WHERE parcel_id=:parcel_id LIMIT 1';
@@ -313,7 +325,7 @@ $app->on('POST /parcel/([0-9]+)', function($pid) {
 			$sql.= $k.'=:'.$k.', ';
 			$prm[':'.$k] = $v;
 		}
-		$sql = substr($sql, 0, -2);  
+		$sql = substr($sql, 0, -2);
 		$sql.= ' WHERE id=:id';
 		$prm[':id'] = (int)$pid;
 
