@@ -52,8 +52,9 @@ $app->out = function($msg,$code){
 
 //api for user login ------->  "/api/login"
 $app->on('POST /login', function(){
-	$username = $this->body->username;
-	$password = $this->body->password;
+
+	$username = $this->body['username'];
+	$password = $this->body['password'];
 
 	// db sql query to check user and password
 	$sql = 'SELECT id FROM user WHERE username=:uname AND password=:upass LIMIT 1';
@@ -122,8 +123,8 @@ $app->on('POST /user', function(){
 	if(!$this->auth($token,$uid)){
 		$this->out('access unauthorized',400);
 	}else{
-		$username = $this->body->username;
-		$password = $this->body->password;
+		$username = $this->body['username'];
+		$password = $this->body['password'];
 
 		//check if user already existed
 		$sql = 'SELECT id FROM user WHERE username=:uname LIMIT 1';
@@ -162,7 +163,7 @@ $app->on('POST /user', function(){
 $app->on('POST /user/([0-9]+)', function($id){
 	$token = (isset($this->query->token)) ? $this->query->token: $this->out('token is required',400);
 	$uid = (isset($this->query->uid)) ? $this->query->uid: $this->out('uid is required',400);
-	$password = (isset($this->body->password) && !empty($this->body->password)) ? $this->body->password: $this->out('password is required',400);
+	$password = (isset($this->body['password']) && !empty($this->body['password'])) ? $this->body['password']: $this->out('password is required',400);
 
 	if(!$this->auth($token,$uid)){
 		$this->out('access unauthorized',400);
@@ -270,7 +271,7 @@ $app->on('POST /parcel', function(){
 	if(!$this->auth($token,$uid) || $uid != 1){
 		$this->out('access unauthorized',400);
 	}else{
-		$parcel = (isset($this->body->parcel)) ? $this->body->parcel : $this->out('parcel is required',400);
+		$parcel = (isset($this->body['parcel'])) ? $this->body['parcel'] : $this->out('parcel is required',400);
 		$data = json_decode($parcel);
 
 		//check if user already existed
@@ -314,7 +315,7 @@ $app->on('POST /parcel', function(){
 $app->on('POST /parcel/([0-9]+)', function($pid) {
 	$token = (isset($this->query->token)) ? $this->query->token : $this->out('token is required',400);
 	$uid = (isset($this->query->uid)) ? $this->query->uid : $this->out('uid is required',400);
-	$parcel = (isset($this->body->parcel)) ? $this->body->parcel : $this->out('parcel is required',400);
+	$parcel = (isset($this->body['parcel'])) ? $this->body['parcel'] : $this->out('parcel is required',400);
 	$data = json_decode($parcel);
 	if(!$this->auth($token,$uid) || $uid != 1){
 		$this->out('access unauthorized',400);
