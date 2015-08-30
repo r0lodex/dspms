@@ -160,7 +160,7 @@ $app->on('POST /user', function(){
 });
 
 //api for update user ------->  "/api/user/{id}"
-$app->on('POST /user/([0-9]+)', function($id){
+$app->on('PUT /user/([0-9]+)', function($id){
 	$token = (isset($this->query->token)) ? $this->query->token: $this->out('token is required',400);
 	$uid = (isset($this->query->uid)) ? $this->query->uid: $this->out('uid is required',400);
 	$password = (isset($this->body['password']) && !empty($this->body['password'])) ? $this->body['password']: $this->out('password is required',400);
@@ -223,6 +223,12 @@ $app->on('DELETE /user/([0-9]+)', function($id){
 });
 
 
+
+
+/****************
+*   PARCEL API  *
+*****************/
+
 //api for all parcel ------> "/api/parcel"
 $app->on('GET /parcel', function(){
 	$sql = 'SELECT * FROM parcel';
@@ -236,24 +242,10 @@ $app->on('GET /parcel', function(){
 	$this->out($res,200);
 });
 
-//api for find parcel ------->  "/api/parcel/find/{parcel_id}"
-$app->on('GET /parcel/find/:?', function($parcel_id){
-	$sql = 'SELECT * FROM parcel WHERE parcel_id = :q';
-	$prm = [':q' => $parcel_id];
-	$dbh = $this->dbc();
-	$qry = $dbh->prepare($sql);
-	$qry->execute($prm);
-
-	$res = $qry->fetchAll(PDO::FETCH_ASSOC);
-
-	//send output
-	$this->out($res,200);
-});
-
-//api for list parcel ------->  "/api/parcel/student/{student_id}"
-$app->on('GET /parcel/student/:?', function($student_id){
-	$sql = 'SELECT * FROM parcel WHERE student_id = :q';
-	$prm = [':q' => $student_id];
+//api for parcel based on status ------> "/api/parcel/{parcel_status}"
+$app->on('GET /parcel/([0-9]+)', function($state){
+	$sql = 'SELECT * FROM parcel WHERE status = :a';
+	$prm = [':a' => $state];
 	$dbh = $this->dbc();
 	$qry = $dbh->prepare($sql);
 	$qry->execute($prm);
@@ -271,52 +263,44 @@ $app->on('POST /parcel', function(){
 	if(!$this->auth($token,$uid) || $uid != 1){
 		$this->out('access unauthorized',400);
 	}else{
+
 		$parcel = (isset($this->body['parcel'])) ? $this->body['parcel'] : $this->out('parcel is required',400);
 		$data = json_decode($parcel);
 
-		//check if user already existed
-		$sql = 'SELECT id FROM parcel WHERE parcel_id=:parcel_id LIMIT 1';
+		// get data
+		$data['student_name'] = (isset($this->body['student_name'])) ? $this->body['student_name']:null;
+		$data['student_id'] = (isset($this->body['student_id'])) ? $this->body['student_id']:null;
+		$data['parcel_id'] = (isset($this->body['parcel_id'])) ? $this->body['parcel_id']:null;
+
+		// db sql query to add parcel
+		$sql = 'INSERT INTO parcel (student_id, student_name, parcel_id, date_in, status) VALUES (:sid, :sname, :parcel, :date_in, :status) ';
 		// query parameter
 		$prm = [
-			':parcel_id' => $data->parcel_id
+			':sid' => $data['student_id'],
+			':sname' => $data['student_name'],
+			':parcel' => $data['parcel_id'],
+			':date_in' => time(),
+			':status' => ParcelStatus::RECEIVED
 		];
+
 		// create db connection and executing query
 		$dbh = $this->dbc();
 		$qry = $dbh->prepare($sql);
 		$qry->execute($prm);
-		$res = $qry->fetch(PDO::FETCH_ASSOC);
 
-		if(!empty($res)) {
-			$this->out('parcel already added',200);
-		}else{
-			// db sql query to add parcel
-			$sql = 'INSERT INTO parcel (student_id, student_name, parcel_id, date_in, status) VALUES (:sid, :sname, :parcel, :date_in, :status) ';
-			// query parameter
-			$prm = [
-				':sid' => $data->student_id,
-				':sname' => $data->student_name,
-				':parcel' => $data->parcel_id,
-				':date_in' => date('Y-m-d'),
-				':status' => ParcelStatus::RECEIVED
-			];
+		// send output
+		$this->end('parcel added!',201);
 
-			// create db connection and executing query
-			$dbh = $this->dbc();
-			$qry = $dbh->prepare($sql);
-			$qry->execute($prm);
-
-			// send output
-			$this->end('parcel added!',201);
-		}
 	}
 });
 
 //api for update parcel ------->  "/api/parcel/{id}"
-$app->on('POST /parcel/([0-9]+)', function($pid) {
+$app->on('PUT /parcel/([0-9]+)', function($pid) {
 	$token = (isset($this->query->token)) ? $this->query->token : $this->out('token is required',400);
 	$uid = (isset($this->query->uid)) ? $this->query->uid : $this->out('uid is required',400);
-	$parcel = (isset($this->body['parcel'])) ? $this->body['parcel'] : $this->out('parcel is required',400);
-	$data = json_decode($parcel);
+
+	$data = $this->body;
+
 	if(!$this->auth($token,$uid) || $uid != 1){
 		$this->out('access unauthorized',400);
 	}else{
@@ -346,13 +330,12 @@ $app->on('DELETE /parcel/([0-9]+)', function($pid){
 	$uid = (isset($this->query->uid)) ? $this->query->uid: $this->out('uid is required',400);
 	if(!$this->auth($token,$uid) || $uid != 1){
 		$this->out('access unauthorized',400);
-	}elseif($id == 1){
-		$this->out('Cant delete default user',401);
 	}else{
-		//db query to delete user
-		$sql = 'DELETE FROM parcel WHERE id=:id';
+		//db query to soft delete parcel
+		$sql = 'UPDATE parcel SET status=:state WHERE id=:id';
 		//set parameter
 		$prm = [
+			':state'=>ParcelStatus::CLAIMED,
 			':id'=>$pid
 		];
 		//connect db and execute
@@ -365,7 +348,7 @@ $app->on('DELETE /parcel/([0-9]+)', function($pid){
 	}
 });
 
-//default route 
+//default route
 $app->on('/:*', function(){
 	$out = json_encode([
 		'err' => true,
