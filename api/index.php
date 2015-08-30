@@ -9,9 +9,9 @@ $app = new Horus();
 // function to create db connection
 $app->dbc = function(){
 	$dbuser = 'root';
-	$dbpass = '';
+	$dbpass = 'root';
 	try {
-	    $dbh = new PDO("mysql:host=localhost;dbname=dspms", $dbuser, $dbpass);
+	    $dbh = new PDO("mysql:host=localhost;dbname=parcelman", $dbuser, $dbpass);
 	    return $dbh;
 	}catch(PDOException $e){
 	    echo $e->getMessage();
