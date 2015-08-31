@@ -332,11 +332,12 @@ $app->on('DELETE /parcel/([0-9]+)', function($pid){
 		$this->out('access unauthorized',400);
 	}else{
 		//db query to soft delete parcel
-		$sql = 'UPDATE parcel SET status=:state WHERE id=:id';
+		$sql = 'UPDATE parcel SET status=:state, date_out=:dateout WHERE id=:id';
 		//set parameter
 		$prm = [
 			':state'=>ParcelStatus::CLAIMED,
-			':id'=>$pid
+			':id'=>$pid,
+			':dateout'=> time()
 		];
 		//connect db and execute
 		$dbh = $this->dbc();
