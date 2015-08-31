@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `dspms` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `dspms`;
 -- MySQL dump 10.13  Distrib 5.6.24, for Win64 (x86_64)
 --
--- Host: localhost    Database: dspms
+-- Host: 192.168.50.4    Database: dspms
 -- ------------------------------------------------------
 -- Server version	5.5.44-0ubuntu0.14.04.1
 
@@ -29,11 +27,11 @@ CREATE TABLE `parcel` (
   `student_id` varchar(45) DEFAULT NULL,
   `student_name` varchar(45) DEFAULT NULL,
   `parcel_id` varchar(45) DEFAULT NULL,
-  `date_in` date DEFAULT NULL,
-  `date_out` date DEFAULT NULL,
+  `date_in` varchar(20) DEFAULT NULL,
+  `date_out` varchar(20) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +40,7 @@ CREATE TABLE `parcel` (
 
 LOCK TABLES `parcel` WRITE;
 /*!40000 ALTER TABLE `parcel` DISABLE KEYS */;
-INSERT INTO `parcel` VALUES (1,'888','nama','jkb7980y','2015-08-25',NULL,1),(2,'888','nama','jkbsaff7980y','2015-08-25',NULL,1);
+INSERT INTO `parcel` VALUES (1,'888','nama','jkb7980y','123124214',NULL,1),(2,'888','nama','jkbsaff7980y','214242142',NULL,1);
 /*!40000 ALTER TABLE `parcel` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -95,7 +93,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'system','system','576d045d14c3a741dbb3421f03ef27d6'),(4,'admin','admin','576d045d14c3a741dbb3421f03ef27d6');
+INSERT INTO `user` VALUES (1,'system','system','f87f13e42128fc201364747c090da5ac'),(4,'admin','admin','576d045d14c3a741dbb3421f03ef27d6');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -108,4 +106,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-25 14:16:53
+-- Dump completed on 2015-08-31 12:21:29
